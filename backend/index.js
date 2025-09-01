@@ -15,21 +15,34 @@ const DB_URI = process.env.MONGODB_URI;
 // middlewares
 app.use(express.json());
 app.use(cookieParser());
+
+// ✅ Allow multiple origins (local + Netlify)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://arjuntodolist77.netlify.app",
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: ["Content-Type", "Authorization"], // Add other headers you want to allow here.
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 // Database connection code
 try {
   await mongoose.connect(DB_URI);
-  console.log("Connected to MongoDB");
+  console.log("✅ Connected to MongoDB");
 } catch (error) {
-  console.log(error);
+  console.error("❌ MongoDB connection error:", error);
 }
 
 // routes
@@ -37,5 +50,5 @@ app.use("/todo", todoRoute);
 app.use("/user", userRoute);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });
