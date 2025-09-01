@@ -19,7 +19,7 @@ app.use(cookieParser());
 // ✅ Allow multiple origins (local + Netlify)
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://arjuntodolist77.netlify.app",
+  "https://arjun-todolist-3.onrender.com",
 ];
 
 app.use(
